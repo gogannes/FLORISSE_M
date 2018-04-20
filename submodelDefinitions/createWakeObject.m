@@ -28,10 +28,11 @@ classdef createWakeObject<handle
         end
         
         % Setup the wake deficit submodel
-        function [wake] = deficit(self,turbine,wake)            
+        function [wake] = deficit(self,turbine,wake,wake_def_error)            
             [wake] = wakeVelocityModels(self.modelData,...
                                         turbine,...
-                                        wake);
+                                        wake,...
+                                        wake_def_error);
         end
         
         % Setup the wake sum submodel

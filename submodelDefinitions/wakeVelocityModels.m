@@ -1,4 +1,8 @@
-function [wake] = wakeVelocityModels(modelData,turbine,wake)
+function [wake] = wakeVelocityModels(modelData,turbine,wake,wake_def_error)
+
+if nargin ==3
+    wake_def_error = 0;
+end
 
 %% Wake deficit model choice
 % Herein we define how we want to model the shape of our wake (looking at
@@ -45,7 +49,8 @@ switch modelData.deficitModel
                 permute(cat(4,y,z),[4 3 1 2])))).*(elipRatio(x,y,z).^2));
             
             % Eq 6.13
-            NW = @(x,y,z) 1-C0*(NW_mask(x,y,z)+NW_exp(x,y,z).*~NW_mask(x,y,z));
+            % NW = @(x,y,z) 1-C0*(NW_mask(x,y,z)+NW_exp(x,y,z).*~NW_mask(x,y,z));
+            NW = @(x,y,z) 1-(wake_def_error+1)*C0*(NW_mask(x,y,z)+NW_exp(x,y,z).*~NW_mask(x,y,z));
             
             % Eq 7.2
             ky = @(I) modelData.ka*I + modelData.kb;
@@ -59,7 +64,8 @@ switch modelData.deficitModel
             % Eq 7.1
             FW_scalar = @(x) 1-sqrt(1-turbine.Ct.*cos(turbine.ThrustAngle)*...
                 sqrt(det((C*(sigNeutral_x0.^2))/varWake(x))));
-            FW = @(x,y,z) 1-FW_scalar(x).*FW_exp(x,y,z);
+            % FW = @(x,y,z) 1-(FW_scalar(x).*FW_exp(x,y,z));
+            FW = @(x,y,z) 1-(FW_scalar(x).*FW_exp(x,y,z)*(1+wake_def_error));
             
             % Compute the integrated velocity deficit in a circular region with
             % radius bladeR with centerpoint position x, y, z

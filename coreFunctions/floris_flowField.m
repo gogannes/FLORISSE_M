@@ -20,7 +20,11 @@ function [ flowField ] = floris_flowField( inputData,flowField,turbines,wakes )
         % Replace the centerline positions with an array of x-coordinates
         wakes(turb_num).centerLine(1,:) = flowField.X(1,flowField.X(1,:,1)>=(turbines(turb_num).LocWF(1)-tpr),1);
         % Compute the Y and Z coordinates of the wake
-        wakes(turb_num).centerLine = floris_wakeCenterline(inputData.wakeModel, turbines(turb_num), wakes(turb_num).centerLine(1,:));
+        if ~isfield(inputData,'wake_pos_error')
+            inputData.wake_pos_error=inputData.yawAngles*0;
+        end
+        wakes(turb_num).centerLine = floris_wakeCenterline(inputData.wakeModel, turbines(turb_num), wakes(turb_num).centerLine(1,:),...
+            inputData.wake_pos_error(turb_num));
     end
     
     % Compute the windspeed at a cutthrough of the wind farm at every x-coordinate

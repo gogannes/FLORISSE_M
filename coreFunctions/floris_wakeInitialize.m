@@ -1,4 +1,4 @@
-function [ wake ] = floris_wakeInitialize( wakeModel,turbine,wake )
+function [ wake ] = floris_wakeInitialize( wakeModel,turbine,wake,wake_def_error )
 % This function computes the coefficients that determine wake behaviour.
 % The initial deflection and diameter of the wake are also computed.
 
@@ -13,5 +13,5 @@ function [ wake ] = floris_wakeInitialize( wakeModel,turbine,wake )
     % This can be according to a number of choices, namely the standard
     % FLORIS model with 3 discrete wake zones. Also a Gaussian wake shape
     % can be assumed, among others.    
-    wake = wakeModel.deficit(turbine,wake);
+    wake = wakeModel.deficit(turbine,wake, wake_def_error);
 end
